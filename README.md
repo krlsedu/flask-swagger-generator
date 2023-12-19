@@ -23,7 +23,11 @@ from flask_swagger_generator.generators.swagger_view import SwaggerView
 
 # Create the flask app
 app = Flask(__name__)
+...
+# Create all the routes for the app
+...
 
+# Note: The swagger view must be created after all the routes have been created
 # Create and publish the swagger view
 SwaggerView.init(app=app, 
                  application_version='1.0.0', 
