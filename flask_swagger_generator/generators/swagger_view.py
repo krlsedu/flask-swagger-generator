@@ -50,7 +50,6 @@ class SwaggerView:
             annotation = annotation[0]
         sub_type = None
         if hasattr(annotation, '__origin__'):
-            # ddddd = annotation.__origin__
             if not is_sub_type:
                 try:
                     sub_type = get_args(annotation)[0]
@@ -76,6 +75,8 @@ class SwaggerView:
                 elif typ == float:
                     schema_dict[attribute] = fields.Float(example=1.0)
                 elif Utils.is_list(typ):
+                    if sub_type is None:
+                        sub_type = Utils.get_class_by_type(typ)
                     from_class = SwaggerView.__create_schema_from_class(sub_type, is_sub_type)
                     schema_dict[attribute] = fields.List(fields.Nested(from_class), example=[from_class])
                 else:

@@ -1,3 +1,7 @@
+import re
+from importlib import import_module
+
+
 class Utils:
 
     @staticmethod
@@ -7,3 +11,18 @@ class Utils:
         elif typ is list or isinstance(typ, list):
             return True
         return False
+
+    @staticmethod
+    def extract_inner_type(typ):
+        match = re.search(r'\[(.*?)\]', str(typ))
+        return match.group(1) if match else None
+
+    @staticmethod
+    def get_class_by_type(typ):
+        fully_qualified_classname = Utils.extract_inner_type(typ)
+        if fully_qualified_classname is None:
+            return None
+        module_name, class_name = fully_qualified_classname.rsplit(".", 1)
+        module = import_module(module_name)
+        cls = getattr(module, class_name)
+        return cls
