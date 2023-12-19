@@ -46,6 +46,8 @@ class SwaggerView:
     @staticmethod
     def __create_schema_from_class(annotation, is_sub_type=False):
         schema_dict = {}
+        if isinstance(annotation, tuple):
+            annotation = annotation[0]
         sub_type = None
         if hasattr(annotation, '__origin__'):
             # ddddd = annotation.__origin__
