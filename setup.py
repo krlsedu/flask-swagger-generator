@@ -10,15 +10,14 @@ with open('requirements.txt') as f:
     required = f.read().splitlines()
 
 setuptools.setup(
-    name="flask-swagger-generator",
+    name="flask-swagger-init",
     version=VERSION,
     license="MIT",
-    author="coding kitties",
-    description="A library for generating swagger open api specifications for "
-                "the Flask web framework",
+    author="Carlos Eduardo",
+    description="A library for generating and publishing Swagger specifications for Flask applications.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/coding-kitties/flask-swagger-generator.git",
+    url="https://github.com/krlsedu/flask-swagger-generator.git",
     packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
     keywords=['Flask', 'swagger', 'swagger generator', 'OpenAPI'],
     classifiers=[

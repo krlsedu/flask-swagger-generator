@@ -7,7 +7,7 @@ APIs expressed using JSON and YAML.
 Install and update using pip:
 
 ```
-pip install flask-swagger-generator
+pip install flask-swagger-init
 ```
 
 ## Documentation
@@ -16,32 +16,23 @@ COMING SOON
 ## A Simple Example
 
 ```python
-from flask import Blueprint, jsonify
+
 from flask import Flask
+from flask_swagger_generator.generators.swagger_view import SwaggerView
 
-from flask_swagger_generator.generators import Generator
-from flask_swagger_generator.specifiers import SwaggerVersion
-from flask_swagger_generator.utils import SecurityType
-
-swagger_destination_path = '/static/swagger.yaml'
-
-# Create the bluepints
-blueprint = Blueprint('objects', __name__)
 
 # Create the flask app
 app = Flask(__name__)
 
-# Create swagger version 3.0 generator
-generator = Generator.of(SwaggerVersion.VERSION_THREE)
-
-# Add security, response and request body definitions
-@generator.security(SecurityType.BEARER_AUTH)
-@generator.response(status_code=200, schema={'id': 10, 'name': 'test_object'})
-@generator.request_body({'id': 10, 'name': 'test_object'})
-@blueprint.route('/objects/<int:object_id>', methods=['PUT'])
-def update_object(object_id):
-    return jsonify({'id': 1, 'name': 'test_object_name'}), 201
-
-app.register_blueprint(blueprint)
-generator.generate_swagger(app, destination_path=swagger_destination_path)
+# Create and publish the swagger view
+SwaggerView.init(app=app, 
+                 application_version='1.0.0', 
+                 application_name='My API', 
+                 application_description='My API description')
 ```
+
+## License
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Based on
+This application is based on the flask-swagger-generator project by [Coding Kitties]
