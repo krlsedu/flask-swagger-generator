@@ -1,6 +1,6 @@
 import inspect
 from datetime import datetime
-from typing import get_args, TypeVar
+from typing import get_args
 
 from flask import Flask
 from flask_swagger_ui import get_swaggerui_blueprint
@@ -10,19 +10,38 @@ from flask_swagger_generator.generators import Generator
 from flask_swagger_generator.utils import SwaggerVersion
 from flask_swagger_generator.utils.utils import Utils
 
-T = TypeVar('T')
-
 
 class SwaggerView:
     @staticmethod
-    def init(app: Flask, gerador: Generator = None, application_root: str = "", swagger_destination_path: str = None):
+    def init(app: Flask,
+             gerador: Generator = None,
+             application_root: str = "",
+             swagger_destination_path: str = None,
+             application_name: str = None,
+             application_version: str = None,
+             application_description: str = None):
         if gerador is None:
             gerador = Generator.of(SwaggerVersion.VERSION_THREE)
 
         if swagger_destination_path is None:
             swagger_destination_path = 'static/swagger.yaml'
 
-        SwaggerView.__init_swagger(app, gerador, swagger_destination_path, application_root)
+        if application_name is None:
+            application_name = 'default'
+
+        if application_version is None:
+            application_version = '1.0.0'
+
+        if application_description is None:
+            application_description = 'Project description'
+
+        SwaggerView.__init_swagger(app,
+                                   gerador,
+                                   swagger_destination_path,
+                                   application_root,
+                                   application_name,
+                                   application_version,
+                                   application_description)
 
     @staticmethod
     def __create_schema_from_class(annotation, is_sub_type=False):
@@ -69,7 +88,13 @@ class SwaggerView:
         return dynamic_schema()
 
     @staticmethod
-    def __init_swagger(app: Flask, generator: Generator, swagger_destination_path: str, application_root: str = ""):
+    def __init_swagger(app: Flask,
+                       generator: Generator,
+                       swagger_destination_path: str,
+                       application_root: str,
+                       application_name: str,
+                       application_version: str,
+                       application_description: str):
         funcs = []
         for rule in app.url_map.iter_rules():
             http_methods = rule.methods
@@ -94,8 +119,9 @@ class SwaggerView:
 
         generator.generate_swagger(app,
                                    destination_path=swagger_destination_path,
-                                   application_name='fgl-py-check-order-integration',
-                                   application_version='1.0.0',
+                                   application_name=application_name,
+                                   application_version=application_version,
+                                   application_description=application_description,
                                    )
         swagger_url = f'{application_root}/swagger-ui'
         api_url = f'{application_root}/swagger'

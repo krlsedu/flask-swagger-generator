@@ -106,6 +106,7 @@ class SwaggerMashmallowSchema(SwaggerSchema):
                 )
             else:
                 if isinstance(schema.fields[field], fields.List):
+                    name = f'{field}_{self.reference_name}'
                     full_reference = f'"#/components/schemas/' \
                                  f'{field}_{self.reference_name}"'
                     nested_schemas.append(

@@ -46,25 +46,47 @@ class SwaggerThreeSpecifier(SwaggerModel, SwaggerSpecifier):
         self._add_responses_to_paths()
         self._add_securities_to_paths()
 
-        meta = inspect.cleandoc("""
-            openapi: 3.0.1
-            info:
-              title: {name}
-              description: Generated at {time}. This is the swagger 
-                ui based on the open api 3.0 specification of the {name}
-              version: {version} created by the flask swagger generator.
-            externalDocs:
-              description: Find out more about Swagger
-              url: 'http://swagger.io'
-            servers:
-              - url: '{server_url}'
-            """.format(
-                name=self.application_name,
-                version=self.application_version,
-                time=datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                server_url=self.server_url
+        if self.application_description is not None:
+            meta = inspect.cleandoc("""
+                openapi: 3.0.1
+                info:
+                  title: {name}
+                  description: {description}. This is the swagger 
+                    ui based on the open api 3.0 specification of the {name}
+                  version: {version}.
+                externalDocs:
+                  description: Find out more about Swagger
+                  url: 'http://swagger.io'
+                servers:
+                  - url: '{server_url}'
+                """.format(
+                    name=self.application_name,
+                    version=self.application_version,
+                    description=self.application_description,
+                    server_url=self.server_url
+                )
             )
-        )
+        else:
+            meta = inspect.cleandoc("""
+                openapi: 3.0.1
+                info:
+                  title: {name}
+                  description: Generated at {time}. This is the swagger 
+                    ui based on the open api 3.0 specification of the {name}
+                  version: {version}.
+                externalDocs:
+                  description: Find out more about Swagger
+                  url: 'http://swagger.io'
+                servers:
+                  - url: '{server_url}'
+                """.format(
+                    name=self.application_name,
+                    version=self.application_version,
+                    time=datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                    server_url=self.server_url
+                )
+            )
+
 
         file.write(meta)
         file.write("\n")

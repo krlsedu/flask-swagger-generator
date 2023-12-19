@@ -11,7 +11,6 @@ from flask_swagger_generator.utils import SecurityType, SwaggerVersion
 
 
 class Generator:
-
     # Functional
     tab = "  "
 
@@ -39,9 +38,14 @@ class Generator:
             destination_path=None,
             application_name='Application',
             application_version='1.0.0',
-            server_url="/"
+            application_description='Description',
+            server_url="/",
+            tags=None
     ):
-        self.index_endpoints(app)
+        if tags is not None:
+            self.index_endpoints(app, group=tags)
+        else:
+            self.index_endpoints(app, group=application_name)
 
         if not destination_path:
             self.destination_path = os.path.join(os.curdir, 'swagger.yaml')
@@ -51,6 +55,7 @@ class Generator:
         self.specifier.set_application_name(application_name)
         self.specifier.set_application_version(application_version)
         self.specifier.set_server_url(server_url)
+        self.specifier.set_application_description(application_description)
         self.file = open(self.destination_path, 'w')
         self.write_specification()
         self.file.close()
@@ -63,7 +68,6 @@ class Generator:
     def response(self, status_code: int, schema, description: str = ''):
 
         def swagger_response(func):
-
             if not self.generated:
                 self.specifier.add_response(
                     function_name=func.__name__,
@@ -77,11 +81,11 @@ class Generator:
                 return func(*args, **kwargs)
 
             return wrapper
+
         return swagger_response
 
     def request_body(self, schema):
         def swagger_request_body(func):
-
             if not self.generated:
                 self.specifier.add_request_body(
                     func.__name__, schema
@@ -92,11 +96,11 @@ class Generator:
                 return func(*args, **kwargs)
 
             return wrapper
+
         return swagger_request_body
 
     def security(self, security_type: SecurityType):
         def swagger_security(func):
-
             if not self.generated:
                 self.specifier.add_security(
                     func.__name__, security_type
@@ -107,6 +111,7 @@ class Generator:
                 return func(*args, **kwargs)
 
             return wrapper
+
         return swagger_security
 
     def query_parameters(self, parameters):
@@ -121,8 +126,8 @@ class Generator:
                         }
                     ])
         """
-        def swagger_query_parameters(func):
 
+        def swagger_query_parameters(func):
             if not self.generated:
                 self.specifier.add_query_parameters(
                     func.__name__, parameters
@@ -133,6 +138,7 @@ class Generator:
                 return func(*args, **kwargs)
 
             return wrapper
+
         return swagger_query_parameters
 
     def create_schema(self, schema, reference_name=None):
@@ -144,7 +150,7 @@ class Generator:
     def specifier(self) -> SwaggerSpecifier:
         return self._specifier
 
-    def index_endpoints(self, app):
+    def index_endpoints(self, app, group=None):
 
         for rule in app.url_map.iter_rules():
 
@@ -161,4 +167,5 @@ class Generator:
                     function_name=rule.endpoint,
                     path=str(rule),
                     request_types=rule.methods,
+                    group=group
                 )
