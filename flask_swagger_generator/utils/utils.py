@@ -22,6 +22,8 @@ class Utils:
         fully_qualified_classname = Utils.extract_inner_type(typ)
         if fully_qualified_classname is None:
             return None
+        if '.' not in fully_qualified_classname:
+            return eval(fully_qualified_classname)
         module_name, class_name = fully_qualified_classname.rsplit(".", 1)
         module = import_module(module_name)
         cls = getattr(module, class_name)

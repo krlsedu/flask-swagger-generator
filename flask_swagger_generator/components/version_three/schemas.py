@@ -167,7 +167,10 @@ class SwaggerMashmallowSchema(SwaggerSchema):
         elif isinstance(value, fields.Float):
             return float(val)
         elif isinstance(value, fields.List):
-            return val[0].fields
+            val__fields = val[0].fields
+            if len(val__fields) == 0:
+                return str(val[0])
+            return val__fields
         elif isinstance(value, fields.Email):
             return str(val)
         elif isinstance(value, fields.Boolean):
