@@ -11,12 +11,11 @@ class SwaggerSchemaAttribute(SwaggerModel):
         self.name = name
         self.reference = reference
 
-        if reference is not None:
-            self.type = PropertyType.OBJECT.value
-
+        if type is not None:
+            self.type = type
         else:
-            if type is not None:
-                self.type = type
+            if reference is not None:
+                self.type = PropertyType.OBJECT.value
             else:
                 self.type = PropertyType.from_value(value)
 
@@ -25,19 +24,35 @@ class SwaggerSchemaAttribute(SwaggerModel):
     def perform_write(self, file):
 
         if PropertyType.ARRAY.equals(self.type):
-            entry = inspect.cleandoc(
-                """
-                    {name}:
-                      type: {type}  
-                      items:
-                        type: {items_type}
-                """.format(
-                        name=self.name,
-                        type=self.type.value,
-                        example=self.value,
-                        items_type=PropertyType.from_value(self.value[0]).value
+            item_type_ = PropertyType.from_value(self.value)
+            if item_type_.equals(PropertyType.OBJECT):
+                entry = inspect.cleandoc(
+                    """
+                        {name}:
+                          type: {type}  
+                          items:
+                            $ref: {ref}
+                    """.format(
+                            name=self.name,
+                            type=self.type.value,
+                            example=self.value,
+                            ref=self.reference
+                    )
                 )
-            )
+            else:
+                entry = inspect.cleandoc(
+                    """
+                        {name}:
+                          type: {type}  
+                          items:
+                            type: {items_type}
+                    """.format(
+                            name=self.name,
+                            type=self.type.value,
+                            example=self.value,
+                            items_type=item_type_.value
+                    )
+                )
             entry = self.indent(entry, 4 * self.TAB)
             file.write(entry)
             file.write('\n')

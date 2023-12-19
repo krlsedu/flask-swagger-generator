@@ -1,13 +1,12 @@
 import inspect
 from logging import getLogger
 
-from marshmallow import fields
-
 from flask_swagger_generator.components.swagger_models import SwaggerModel
 from flask_swagger_generator.components.version_three.schema_attribute import \
     SwaggerSchemaAttribute
 from flask_swagger_generator.exceptions import SwaggerGeneratorException
 from flask_swagger_generator.utils import PropertyType
+from marshmallow import fields
 
 logger = getLogger(__name__)
 
@@ -82,7 +81,7 @@ class SwaggerSchema(SwaggerModel):
 class SwaggerMashmallowSchema(SwaggerSchema):
 
     def __init__(self, schema=None, reference_name=None, name=None):
-        super(SwaggerMashmallowSchema, self)\
+        super(SwaggerMashmallowSchema, self) \
             .__init__(reference_name=reference_name, name=name)
 
         nested_schemas = []
@@ -106,18 +105,32 @@ class SwaggerMashmallowSchema(SwaggerSchema):
                     )
                 )
             else:
+                if isinstance(schema.fields[field], fields.List):
+                    full_reference = f'"#/components/schemas/' \
+                                 f'{field}_{self.reference_name}"'
+                    nested_schemas.append(
+                        SwaggerMashmallowSchema(
+                            schema=schema.fields[field].inner.nested,
+                            reference_name=name
+                        )
+                    )
+                else:
+                    full_reference = None
                 try:
+                    marshmallow_type = self.get_marshmallow_type(schema.fields[field])
+                    value = self.get_example_value(schema.fields[field])
                     self.swagger_models.append(
                         SwaggerSchemaAttribute(
                             name=field,
-                            type=self.get_marshmallow_type(schema.fields[field])
+                            type=marshmallow_type,
+                            value=value,
+                            reference=full_reference
                         )
                     )
                 except SwaggerGeneratorException as e:
                     logger.error(e)
 
         self.swagger_models += nested_schemas
-
 
     @staticmethod
     def get_marshmallow_type(value):
@@ -138,6 +151,30 @@ class SwaggerMashmallowSchema(SwaggerSchema):
             return PropertyType.DATE_TIME
         elif isinstance(value, fields.URL):
             return PropertyType.STRING
+        else:
+            raise SwaggerGeneratorException(
+                "Type {} is not supported".format(type(value))
+            )
+
+    @staticmethod
+    def get_example_value(value: fields.Field):
+        val = value.metadata.get('example')
+        if isinstance(value, fields.Integer):
+            return int(val)
+        elif isinstance(value, fields.String):
+            return str(val)
+        elif isinstance(value, fields.Float):
+            return float(val)
+        elif isinstance(value, fields.List):
+            return val[0].fields
+        elif isinstance(value, fields.Email):
+            return str(val)
+        elif isinstance(value, fields.Boolean):
+            return bool(val)
+        elif isinstance(value, fields.DateTime):
+            return str(val)
+        elif isinstance(value, fields.URL):
+            return str(val)
         else:
             raise SwaggerGeneratorException(
                 "Type {} is not supported".format(type(value))

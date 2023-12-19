@@ -26,9 +26,7 @@ class PropertyType(Enum):
         elif isinstance(value, dict):
             return PropertyType.OBJECT
         else:
-            SwaggerGeneratorException(
-                "Type {} is not supported".format(type(value))
-            )
+            return PropertyType.ARRAY
 
     def equals(self, other):
 
