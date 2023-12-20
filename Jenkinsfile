@@ -46,7 +46,7 @@ pipeline {
             steps {
                 script {
                     echo 'RELEASE_COMMIT ' + env.RELEASE_COMMIT
-                    if (env.BRANCH_NAME == 'master') {
+                    if (env.BRANCH_NAME == 'main') {
                         echo 'Master'
                         VERSION = VersionNumber(versionNumberString: '${BUILD_DATE_FORMATTED, "yy"}.${BUILD_WEEK,XX}.${BUILDS_THIS_WEEK,XXX}')
                     } else {
@@ -67,6 +67,10 @@ pipeline {
             }
         }
         stage('Build') {
+            agent any
+            when {
+                expression { env.RELEASE_COMMIT != '0' }
+            }
             steps {
                 withPythonEnv('/usr/bin/python3.9') {
                     sh 'python -m pip install --upgrade pip'
@@ -86,7 +90,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'gitHub', passwordVariable: 'password', usernameVariable: 'user')]) {
                         script {
                             echo "Commiting version"
-                            if (env.BRANCH_NAME == 'master') {
+                            if (env.BRANCH_NAME == 'main') {
                                 sh "git add ."
                                 sh "git config --global user.email 'krlsedu@gmail.com'"
                                 sh "git config --global user.name 'Carlos Eduardo Duarte Schwalm'"
