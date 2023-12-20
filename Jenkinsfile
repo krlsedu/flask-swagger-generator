@@ -97,7 +97,13 @@ pipeline {
                                 sh "git add ."
                                 sh "git config --global user.email 'krlsedu@gmail.com'"
                                 sh "git config --global user.name 'Carlos Eduardo Duarte Schwalm'"
-                                sh "git commit -m 'Triggered Build: " + env.VERSION_NAME + "'"
+                                sh(
+                                        '''
+                                            export OLD_MSG=$(git log -1 --pretty=%B ${GIT_COMMIT} | sed 's/-/\\n/g')
+                                            git commit -m "Triggered Build: $VERSION_NAME 
+                                            Original message: $OLD_MSG"
+                                        '''
+                                )
                                 sh "git tag v" + env.VERSION_NAME
                                 sh 'git push https://krlsedu:${password}@github.com/krlsedu/' + env.REPOSITORY_NAME + '.git HEAD:' + env.BRANCH_NAME + " --tags"
                             }
