@@ -73,10 +73,10 @@ pipeline {
             }
             steps {
                 withPythonEnv('/usr/bin/python3.9') {
-                    sh 'python -m pip install --upgrade pip'
+                    sh 'python3.9 -m pip install --upgrade pip'
                     sh 'pip install -r requirements.txt'
                     sh 'pip install wheel'
-                    sh 'python ./setup.py sdist bdist_wheel'
+                    sh 'python3.9 ./setup.py sdist bdist_wheel'
                 }
             }
         }
