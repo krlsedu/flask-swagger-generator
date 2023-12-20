@@ -91,6 +91,7 @@ pipeline {
                         script {
                             echo "Commiting version"
                             if (env.BRANCH_NAME == 'main') {
+                                sh "git diff"
                                 sh "git add ."
                                 sh "git config --global user.email 'krlsedu@gmail.com'"
                                 sh "git config --global user.name 'Carlos Eduardo Duarte Schwalm'"
