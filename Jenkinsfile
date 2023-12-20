@@ -91,6 +91,8 @@ pipeline {
                         script {
                             echo "Commiting version"
                             if (env.BRANCH_NAME == 'main') {
+                                sh 'git pull https://krlsedu:${password}@github.com/krlsedu/' + env.REPOSITORY_NAME + '.git HEAD:' + env.BRANCH_NAME
+                                sh 'echo ' + env.VERSION_NAME + ' > version.txt'
                                 sh "git diff"
                                 sh "git add ."
                                 sh "git config --global user.email 'krlsedu@gmail.com'"
