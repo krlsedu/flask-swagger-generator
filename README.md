@@ -10,7 +10,7 @@ Install and update using pip:
 pip install flask-swagger-init
 ```
 
-## Documentation
+## Documentation and Examples
 COMING SOON
 
 ## A Simple Example
@@ -39,4 +39,4 @@ SwaggerView.init(app=app,
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Based on
-This application is based on the flask-swagger-generator project by [Coding Kitties]
+This application is based on the [flask-swagger-generator](https://github.com/coding-kitties/flask-swagger-generator) project by [Coding Kitties](https://github.com/coding-kitties).
