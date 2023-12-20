@@ -219,7 +219,11 @@ class SwaggerThreeSpecifier(SwaggerModel, SwaggerSpecifier):
 
             if path_parameters:
                 for path_parameter in path_parameters:
-                    input_type, name = path_parameter.split(':')
+                    try:
+                        input_type, name = path_parameter.split(':')
+                    except ValueError:
+                        input_type = 'string'
+                        name = path_parameter
                     parameter_models.append(SwaggerPathParameter(input_type, name))
 
             for swagger_request_type in swagger_request_types:
