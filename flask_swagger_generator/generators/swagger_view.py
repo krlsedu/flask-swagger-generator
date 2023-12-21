@@ -118,6 +118,9 @@ class SwaggerView:
             else:
                 generator.specifier.add_response(name__, status_code_, schema={})
 
+            parameters_ = SwaggerView.get_parameters(func_signature)
+            generator.specifier.add_query_parameters(name__, parameters_)
+
             funcs.append(name__)
 
         generator.generate_swagger(app,
@@ -140,3 +143,22 @@ class SwaggerView:
             with open(swagger_destination_path, 'r') as f:
                 swagger_yaml = f.read()
             return swagger_yaml
+
+    @staticmethod
+    def get_parameters(func_signature):
+        parameters = func_signature.parameters
+        parameters_ = []
+        for name, param in parameters.items():
+            if param.annotation is not inspect.Parameter.empty:
+                class_attrs = inspect.getmembers(param.annotation, lambda a: not (inspect.isroutine(a)))
+                non_special_attrs = [member for member in class_attrs if not member[0].startswith('__')]
+                for attr in non_special_attrs:
+                    param_name, param_type = attr
+                    class_name = param_type.__name__
+
+                    parameter_ = {
+                        'name': param_name,
+                        'type': class_name
+                    }
+                    parameters_.append(parameter_)
+        return parameters_

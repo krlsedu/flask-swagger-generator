@@ -296,14 +296,18 @@ class SwaggerThreeSpecifier(SwaggerModel, SwaggerSpecifier):
     ):
 
         for parameter in parameters:
-            swagger_query_parameter = SwaggerQueryParameter(
-                function_name, parameter.get("name"),
-                parameter.get("type", "string"),
-                parameter.get("description", None),
-                parameter.get("required", False),
-                parameter.get("allowReserved", False)
-            )
-            self.query_parameters.append(swagger_query_parameter)
+            try:
+                swagger_query_parameter = SwaggerQueryParameter(
+                    function_name, parameter.get("name"),
+                    parameter.get("type", "string"),
+                    parameter.get("description", None),
+                    parameter.get("required", False),
+                    parameter.get("allowReserved", False)
+                )
+                self.query_parameters.append(swagger_query_parameter)
+            except Exception as e:
+                print(e)
+                pass
 
     def add_request_body(self, function_name, schema):
         schema = self._create_schema(schema=schema, reference_name=function_name)
