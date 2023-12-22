@@ -154,11 +154,16 @@ class SwaggerView:
                 non_special_attrs = [member for member in class_attrs if not member[0].startswith('__')]
                 for attr in non_special_attrs:
                     param_name, param_type = attr
+                    required_ = False
+                    if param_type is not None and isinstance(param_type, tuple):
+                        param_type, required_ = param_type
+
                     class_name = param_type.__name__
 
                     parameter_ = {
                         'name': param_name,
-                        'type': class_name
+                        'type': class_name,
+                        'required': required_,
                     }
                     parameters_.append(parameter_)
         return parameters_
