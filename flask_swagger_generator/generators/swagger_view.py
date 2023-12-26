@@ -80,11 +80,8 @@ class SwaggerView:
                     from_class = SwaggerView.__create_schema_from_class(sub_type, is_sub_type)
                     schema_dict[attribute] = fields.List(fields.Nested(from_class), example=[from_class])
                 else:
-                    if sub_type is None:
-                        schema_dict[attribute] = typ
-                    else:
-                        from_class = SwaggerView.__create_schema_from_class(sub_type, is_sub_type)
-                        schema_dict[attribute] = fields.Nested(from_class)
+                    from_class = SwaggerView.__create_schema_from_class(sub_type, is_sub_type)
+                    schema_dict[attribute] = fields.Nested(from_class)
             dynamic_schema = type(f"{class_obj.__name__}Schema", (Schema,), schema_dict)
         except AttributeError:
             dynamic_schema = type(f"defaultSchema", (Schema,), schema_dict)
@@ -119,7 +116,11 @@ class SwaggerView:
                 generator.specifier.add_response(name__, status_code_, schema={})
 
             parameters_ = SwaggerView.get_parameters(func_signature)
-            generator.specifier.add_query_parameters(name__, parameters_)
+
+            generator.specifier.add_query_parameters(name__, parameters_['query_param'])
+            body_ = parameters_['body_param']
+            if body_.__len__() > 0:
+                generator.specifier.add_request_body(name__, body_[0])
 
             funcs.append(name__)
 
@@ -147,23 +148,29 @@ class SwaggerView:
     @staticmethod
     def get_parameters(func_signature):
         parameters = func_signature.parameters
-        parameters_ = []
+        parameters_ = {
+            'query_param': [],
+            'body_param': []
+        }
         for name, param in parameters.items():
-            if param.annotation is not inspect.Parameter.empty:
-                class_attrs = inspect.getmembers(param.annotation, lambda a: not (inspect.isroutine(a)))
-                non_special_attrs = [member for member in class_attrs if not member[0].startswith('__')]
-                for attr in non_special_attrs:
-                    param_name, param_type = attr
-                    required_ = False
-                    if param_type is not None and isinstance(param_type, tuple):
-                        param_type, required_ = param_type
-
-                    class_name = param_type.__name__
-
-                    parameter_ = {
-                        'name': param_name,
-                        'type': class_name,
-                        'required': required_,
-                    }
-                    parameters_.append(parameter_)
+            if name == 'body' or name == 'body_':
+                if param.annotation is not inspect.Parameter.empty:
+                    parameters_['body_param'].append(SwaggerView.__create_schema_from_class(param.annotation))
+            else:
+                if param.annotation is not inspect.Parameter.empty:
+                    class_attrs = inspect.getmembers(param.annotation, lambda a: not (inspect.isroutine(a)))
+                    non_special_attrs = [member for member in class_attrs if not member[0].startswith('__')]
+                    for attr in non_special_attrs:
+                        param_name, param_type = attr
+                        if param_type is not None and isinstance(param_type, tuple):
+                            param_type, required_ = param_type
+                        else:
+                            required_ = False
+                        class_name = param_type.__name__
+                        parameter_ = {
+                            'name': param_name,
+                            'type': class_name,
+                            'required': required_,
+                        }
+                        parameters_['query_param'].append(parameter_)
         return parameters_
