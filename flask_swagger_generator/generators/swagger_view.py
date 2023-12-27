@@ -79,9 +79,11 @@ class SwaggerView:
                         sub_type = Utils.get_class_by_type(typ)
                     from_class = SwaggerView.__create_schema_from_class(sub_type, is_sub_type)
                     schema_dict[attribute] = fields.List(fields.Nested(from_class), example=[from_class])
-                else:
+                elif typ == dict:
                     from_class = SwaggerView.__create_schema_from_class(sub_type, is_sub_type)
                     schema_dict[attribute] = fields.Nested(from_class)
+                else:
+                    schema_dict[attribute] = typ
             dynamic_schema = type(f"{class_obj.__name__}Schema", (Schema,), schema_dict)
         except AttributeError:
             dynamic_schema = type(f"defaultSchema", (Schema,), schema_dict)
