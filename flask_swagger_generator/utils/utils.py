@@ -20,7 +20,7 @@ class Utils:
     @staticmethod
     def get_class_by_type(typ):
         fully_qualified_classname = Utils.extract_inner_type(typ)
-        if fully_qualified_classname is None:
+        if fully_qualified_classname is None or fully_qualified_classname == '~T':
             return None
         if '.' not in fully_qualified_classname:
             return eval(fully_qualified_classname)

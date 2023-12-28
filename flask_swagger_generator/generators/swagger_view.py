@@ -75,9 +75,13 @@ class SwaggerView:
                 elif typ == float:
                     schema_dict[attribute] = fields.Float(example=1.0)
                 elif Utils.is_list(typ):
+                    typ_ = Utils.get_class_by_type(typ)
                     if sub_type is None:
                         sub_type = Utils.get_class_by_type(typ)
-                    from_class = SwaggerView.__create_schema_from_class(sub_type, is_sub_type)
+                    if typ_ is not None:
+                        from_class = SwaggerView.__create_schema_from_class(typ_, True)
+                    else:
+                        from_class = SwaggerView.__create_schema_from_class(sub_type, is_sub_type)
                     schema_dict[attribute] = fields.List(fields.Nested(from_class), example=[from_class])
                 elif typ == dict:
                     from_class = SwaggerView.__create_schema_from_class(sub_type, is_sub_type)
