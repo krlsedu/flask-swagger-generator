@@ -84,7 +84,11 @@ class SwaggerView:
                         from_class = SwaggerView.__create_schema_from_class(sub_type, is_sub_type)
                     schema_dict[attribute] = fields.List(fields.Nested(from_class), example=[from_class])
                 elif typ == dict:
-                    from_class = SwaggerView.__create_schema_from_class(sub_type, is_sub_type)
+                    typ_ = Utils.get_class_by_type(typ)
+                    if typ_ is not None:
+                        from_class = SwaggerView.__create_schema_from_class(typ_, True)
+                    else:
+                        from_class = SwaggerView.__create_schema_from_class(typ, is_sub_type)
                     schema_dict[attribute] = fields.Nested(from_class)
                 else:
                     schema_dict[attribute] = typ
