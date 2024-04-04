@@ -1,4 +1,4 @@
-Flask>=1.1.1
+flask~=3.0.0
 marshmallow>=3.0.0
-setuptools~=51.0.0
+setuptools>=65.5.1
 flask_swagger_ui >= 3.25.0
