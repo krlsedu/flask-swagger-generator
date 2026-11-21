@@ -94,7 +94,7 @@ class SwaggerMashmallowSchema(SwaggerSchema):
                                  f'{field}_{self.reference_name}"'
                 nested_schemas.append(
                     SwaggerMashmallowSchema(
-                        schema=schema.fields[field].nested,
+                        schema=schema.fields[field].schema,
                         reference_name=name
                     )
                 )
@@ -111,7 +111,7 @@ class SwaggerMashmallowSchema(SwaggerSchema):
                                  f'{field}_{self.reference_name}"'
                     nested_schemas.append(
                         SwaggerMashmallowSchema(
-                            schema=schema.fields[field].inner.nested,
+                            schema=schema.fields[field].inner.schema,
                             reference_name=name
                         )
                     )
@@ -160,6 +160,8 @@ class SwaggerMashmallowSchema(SwaggerSchema):
     @staticmethod
     def get_example_value(value: fields.Field):
         val = value.metadata.get('example')
+        if val is None:
+            return None
         if isinstance(value, fields.Integer):
             return int(val)
         elif isinstance(value, fields.String):

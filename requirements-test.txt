@@ -1,4 +1,2 @@
-Flask-Testing==0.8.1
-marshmallow==3.10.0
-PyYAML==5.3.1
-deepdiff==5.2.1
+PyYAML>=6.0.2
+deepdiff>=8.0.0

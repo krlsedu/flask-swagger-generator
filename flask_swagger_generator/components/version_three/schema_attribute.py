@@ -24,8 +24,13 @@ class SwaggerSchemaAttribute(SwaggerModel):
     def perform_write(self, file):
 
         if PropertyType.ARRAY.equals(self.type):
-            item_type_ = PropertyType.from_value(self.value)
-            if item_type_.equals(PropertyType.OBJECT):
+            item_value = (
+                self.value[0]
+                if isinstance(self.value, list) and len(self.value) > 0
+                else self.value
+            )
+            item_type_ = PropertyType.from_value(item_value)
+            if item_type_.equals(PropertyType.OBJECT) and self.reference:
                 entry = inspect.cleandoc(
                     """
                         {name}:

@@ -3,10 +3,10 @@ from version import get_version
 
 VERSION = get_version()
 
-with open("README.md", "r") as fh:
+with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-with open('requirements.txt') as f:
+with open('requirements.txt', encoding="utf-8") as f:
     required = f.read().splitlines()
 
 setuptools.setup(
@@ -23,12 +23,14 @@ setuptools.setup(
     classifiers=[
         "Intended Audience :: Developers",
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
+        'Programming Language :: Python :: 3.15',
         "Topic :: Software Development",
     ],
     install_requires=required,
-    python_requires='>=3',
+    python_requires='>=3.11',
     include_package_data=True,
 )

@@ -1,9 +1,9 @@
 import os
 import pathlib
+import unittest
 
 from deepdiff import DeepDiff
 from flask import Blueprint, jsonify
-from flask_testing import TestCase
 
 from flask_swagger_generator.generators import Generator
 from flask_swagger_generator.components import SwaggerVersion
@@ -38,15 +38,21 @@ def get_num_url(name):
 app.register_blueprint(blueprint)
 
 
-class AppTestBase(TestCase):
+class AppTestBase(unittest.TestCase):
 
     def setUp(self) -> None:
         super(AppTestBase, self).setUp()
+        self.app = self.create_app()
+        self.generated_swagger_path = os.path.join(
+            pathlib.Path(__file__).parent.parent.absolute()
+        ) + '/resources/generated.yaml'
 
     def create_app(self):
         return app
 
     def tearDown(self):
+        if os.path.exists(self.generated_swagger_path):
+            os.remove(self.generated_swagger_path)
         super(AppTestBase, self).tearDown()
 
     def test(self):

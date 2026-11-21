@@ -65,15 +65,15 @@ class SwaggerView:
             annotations = class_obj.__annotations__
             for attribute, typ in annotations.items():
                 if typ == str or typ == fields.String:
-                    schema_dict[attribute] = fields.String(example="Abc 123")
+                    schema_dict[attribute] = fields.String(metadata={"example": "Abc 123"})
                 elif typ == int:
-                    schema_dict[attribute] = fields.Int(example=1)
+                    schema_dict[attribute] = fields.Int(metadata={"example": 1})
                 elif typ == bool:
-                    schema_dict[attribute] = fields.Bool(example=True)
+                    schema_dict[attribute] = fields.Bool(metadata={"example": True})
                 elif typ == datetime:
-                    schema_dict[attribute] = fields.Str(example="2021-01-01T00:00:00.000Z")
+                    schema_dict[attribute] = fields.Str(metadata={"example": "2021-01-01T00:00:00.000Z"})
                 elif typ == float:
-                    schema_dict[attribute] = fields.Float(example=1.0)
+                    schema_dict[attribute] = fields.Float(metadata={"example": 1.0})
                 elif Utils.is_list(typ):
                     typ_ = Utils.get_class_by_type(typ)
                     if sub_type is None:
@@ -82,7 +82,10 @@ class SwaggerView:
                         from_class = SwaggerView.__create_schema_from_class(typ_, True)
                     else:
                         from_class = SwaggerView.__create_schema_from_class(sub_type, is_sub_type)
-                    schema_dict[attribute] = fields.List(fields.Nested(from_class), example=[from_class])
+                    schema_dict[attribute] = fields.List(
+                        fields.Nested(from_class),
+                        metadata={"example": [from_class]},
+                    )
                 elif typ == dict:
                     typ_ = Utils.get_class_by_type(typ)
                     if typ_ is not None:
