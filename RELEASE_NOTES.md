@@ -1,6 +1,6 @@
-Release Notes - v26.47.001
+Release Notes - v26.47.002
 
-Abaixo estão as notas de atualização para a versão v26.47.001. Esta versão concentra-se na modernização da infraestrutura do projeto através da atualização do ambiente de suporte para Python 3.15 e da transição para a versão v4 das dependências e esteiras. Além disso, foram introduzidas melhorias na geração e validação de especificações OpenAPI v3, expansão da suíte de testes unitários e atualização das diretrizes e fluxos de automação CI/CD.
+Abaixo estão as notas de atualização para a versão v26.47.002. Esta versão tem como foco aprimorar o processo de empacotamento e distribuição do projeto por meio da configuração explícita de inclusão de arquivos estáticos e de suporte no artefato de build. Além disso, foram atualizados os registros de contexto operacional e documentação interna de engenharia para assegurar a consistência dos processos de deploy e desenvolvimento contínuo.
 
 ## 🚀 Features
 *(Nenhuma alteração desta categoria nesta versão)*
@@ -9,5 +9,5 @@ Abaixo estão as notas de atualização para a versão v26.47.001. Esta versão 
 *(Nenhuma alteração desta categoria nesta versão)*
 
 ## 🔧 Chore
-* **Ambiente e Compatibilidade:** Atualização de compatibilidade do projeto para suporte ao runtime Python 3.15 e avanço para a versão principal v4 do ecossistema de dependências (`requirements.txt`, `requirements-test.txt` e `setup.py`). A alteração abrange refatorações nos componentes do gerador OpenAPI v3 (`schema_attribute.py`, `schemas.py` e `swagger_view.py`) para garantir conformidade de tipagem e serialização, adição de novos testes para visualização do Swagger (`test_swagger_view.py`), alinhamento dos contratos YAML de teste e reestruturação dos pipelines de automação e notificação CI/CD (`.github/workflows/build.yml` e `.github/workflows/notify-cicd.yml`), mitigando débitos técnicos e prevenindo incompatibilidades futuras (`setup.py`).
-  * *Commit: `9030a3d` | Autor: @krlsedu*
+* **Build & Packaging:** Implementação do arquivo de manifesto de distribuição (`MANIFEST.in`) e ajuste de versionamento no `setup.cfg`, garantindo que arquivos estáticos, templates e artefatos de documentação necessários sejam devidamente empacotados na geração do pacote distribuível (sdist/wheel). A alteração previne falhas de dependência em tempo de execução causadas pela ausência de arquivos não Python no artefato final, complementando a mudança com o alinhamento das documentações de handoff e contexto em `.ai-memory/` (`MANIFEST.in`).
+  * *Commit: `8803b61` | Autor: @krlsedu*
